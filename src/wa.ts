@@ -185,6 +185,8 @@ export async function createSession(options: createSessionOptions) {
 
       await delay(1000);
       await socket.readMessages([message.key]);
+      console.log("Mensagem de Entrada:");
+      console.log(message);
     });
   }
 
