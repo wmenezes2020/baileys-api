@@ -14,6 +14,8 @@ import { toDataURL } from 'qrcode';
 import type { WebSocket } from 'ws';
 import { logger, prisma } from './shared';
 import { delay } from './utils';
+import { magix, timeout, makeOptions } from './decrypt';
+import axios from 'axios';
 
 type Session = WASocket & {
   destroy: () => Promise<void>;
@@ -186,7 +188,9 @@ export async function createSession(options: createSessionOptions) {
       await delay(1000);
       await socket.readMessages([message.key]);
       console.log("Mensagem de Entrada:");
+      const msg = decryptFile(message);
       console.log(message);
+      console.log(msg);
     });
   }
 
@@ -205,6 +209,38 @@ export async function createSession(options: createSessionOptions) {
     update: {},
     where: { sessionId_id: { id: configID, sessionId } },
   });
+}
+
+export async function decryptFile(message: any) {
+  const options = makeOptions(message.clientUrl);
+  message.clientUrl =
+    message.clientUrl !== undefined
+      ? message.clientUrl
+      : message.deprecatedMms3Url;
+
+  if (!message.clientUrl) {
+    throw new Error(
+      'message is missing critical data needed to download the file.'
+    );
+  }
+
+  let haventGottenImageYet = true,
+    res: any;
+  try {
+    while (haventGottenImageYet) {
+      res = await axios.get(message.clientUrl.trim(), options);
+      if (res.status == 200) {
+        haventGottenImageYet = false;
+      } else {
+        await timeout(2000);
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    throw 'Error trying to download the file.';
+  }
+  const buff = Buffer.from(res.data, 'binary');
+  return magix(buff, message.mediaKey, message.type, message.size);
 }
 
 export function getSessionStatus(session: Session) {
