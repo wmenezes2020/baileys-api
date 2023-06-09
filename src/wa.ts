@@ -188,9 +188,9 @@ export async function createSession(options: createSessionOptions) {
       await socket.readMessages([message.key]);
       console.log("Mensagem de Entrada:");
       console.log(message);
-      const whatsapp = new Whatsapp();
-      const MessageDecrypted = whatsapp.decryptFile(message);
-      console.log(MessageDecrypted);
+      // const whatsapp = new Whatsapp();
+      // const MessageDecrypted = whatsapp.decryptFile(message);
+      // console.log(MessageDecrypted);
     });
   }
 
