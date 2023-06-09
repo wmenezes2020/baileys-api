@@ -1,0 +1,18 @@
+version: '3.9'
+services:
+
+  db:
+    image: mysql
+    restart: always
+    container_name: mysql-container-baileys
+    build: ./db
+    environment:
+      MYSQL_DATABASE: baileys
+      MYSQL_USER: baileys
+      MYSQL_PASSWORD: baileys
+      MYSQL_ROOT_PASSWORD: baileys
+    volumes:
+      - './db/data:/var/lib/mysql'
+    ports:
+      - 3306:3306
+

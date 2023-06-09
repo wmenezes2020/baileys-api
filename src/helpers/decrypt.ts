@@ -69,6 +69,7 @@ const fixPadding = (data: Buffer, expectedSize: number) => {
       data = data.slice(0, data.length - padding);
     } else if (data.length + padding == expectedSize) {
       // console.log(`adding: ${padding} bytes`);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const arr = new Uint16Array(padding).map((b) => padding);
       data = Buffer.concat([data, Buffer.from(arr)]);
     }

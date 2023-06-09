@@ -5,3 +5,4 @@ prisma/migrations/
 .env
 *.tgz
 package-lock.json
+/db/data/*

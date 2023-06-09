@@ -14,6 +14,7 @@ import { toDataURL } from 'qrcode';
 import type { WebSocket } from 'ws';
 import { logger, prisma } from './shared';
 import { delay } from './utils';
+import { Whatsapp } from './whatsapp';
 
 type Session = WASocket & {
   destroy: () => Promise<void>;
@@ -187,6 +188,9 @@ export async function createSession(options: createSessionOptions) {
       await socket.readMessages([message.key]);
       console.log("Mensagem de Entrada:");
       console.log(message);
+      const whatsapp = new Whatsapp();
+      const MessageDecrypted = whatsapp.decryptFile(message);
+      console.log(MessageDecrypted);
     });
   }
 
